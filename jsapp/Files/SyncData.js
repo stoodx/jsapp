@@ -1,4 +1,11 @@
-function getSyncData()
+function getSyncData(fileName)
 {
-	alert("My test");
+    var res = fileName;
+    return res;
+}
+
+function main(fileName)
+{
+    var res = getSyncData(fileName);
+    alert(res);
 }
