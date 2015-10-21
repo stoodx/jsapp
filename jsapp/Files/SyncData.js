@@ -1,7 +1,14 @@
+function getSyncDataEcmascript(fileName)
+{
+    var res = "Error: No native function";
+    return res;
+}
+
+var getSyncDataHelper = (this.getSyncDataNative || getSyncDataEcmascript);
+
 function getSyncData(fileName)
 {
-    var res = fileName;
-    return res;
+    return getSyncDataHelper(fileName);
 }
 
 function main(fileName)

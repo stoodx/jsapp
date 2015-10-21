@@ -1,10 +1,18 @@
-// jsapp.cpp : Defines the entry point for the console application.
-//
+//by http://duktape.org/guide.html#gettingstarted
+
 #include "stdafx.h"
 #include <iostream>
+#include <fstream>
 
 extern "C" {
 #include "duktape.h"
+}
+
+static duk_ret_t get_sync_data_native(duk_context *ctx)
+{
+	std::string strFileName = duk_require_string(ctx, 0);
+	duk_push_string(ctx, strFileName.c_str());
+	return 1;
 }
 
 int main(int argc, char* argv[])
@@ -23,13 +31,21 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
+		//preparate a native function
+		duk_push_global_object(ctx);
+		duk_push_c_function(ctx, get_sync_data_native, 1);
+		duk_put_prop_string(ctx, -2, "getSyncDataNative");
+
+		//run js
 		if (duk_peval_file(ctx, argv[1]) == 0)
 		{
 			duk_pop(ctx);
-			duk_push_global_object(ctx);
 			duk_get_prop_string(ctx, -1, "main");
 			duk_push_string(ctx, argv[2]);
-			duk_pcall(ctx, 1);
+			if (duk_pcall(ctx, 1) != 0)
+			{
+				std::cout << "Error: " << duk_safe_to_string(ctx, -1) << std::endl;
+			}
 			duk_pop(ctx);
 		}
 		else
