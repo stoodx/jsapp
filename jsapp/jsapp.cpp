@@ -7,13 +7,7 @@
 extern "C" {
 #include "duktape.h"
 }
-
-static duk_ret_t get_sync_data_native(duk_context *ctx)
-{
-	std::string strFileName = duk_require_string(ctx, 0);
-	duk_push_string(ctx, strFileName.c_str());
-	return 1;
-}
+#include "ÑDukSyncNativeData.h"
 
 int main(int argc, char* argv[])
 {
@@ -31,11 +25,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		//preparate a native function
-		duk_push_global_object(ctx);
-		duk_push_c_function(ctx, get_sync_data_native, 1);
-		duk_put_prop_string(ctx, -2, "getSyncDataNative");
-
+		stoodx::ÑDukSyncNativeData* pDukeNative = new stoodx::ÑDukSyncNativeData(ctx);
 		//run js
 		if (duk_peval_file(ctx, argv[1]) == 0)
 		{
@@ -50,9 +40,10 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			std::cout << "Fail duk_peval_file()" << std::endl;
+			std::cout << "Fail duk_peval_file():" << std::endl <<  duk_safe_to_string(ctx, -1) << std::endl;
 			nRes = 1;
 		}
+		delete pDukeNative;
 	}
 
 	duk_destroy_heap(ctx);
